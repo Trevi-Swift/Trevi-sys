@@ -20,5 +20,6 @@ let package = Package(
     name: "TreviSys",
     dependencies: [
     	.Package(url: "https://github.com/Trevi-Swift/swift-libuv.git", majorVersion: 0)
-    ]
+    ],
+    exclude: ["Makefile", "Xcode"]
 )
