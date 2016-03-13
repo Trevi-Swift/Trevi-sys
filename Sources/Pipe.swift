@@ -9,6 +9,9 @@
 import Libuv
 
 
+/**
+ Provides interactive actions with file descriptors and Stream modules.
+ */
 public class Pipe : Stream {
     
     public let pipeHandle : uv_pipe_ptr
@@ -19,9 +22,14 @@ public class Pipe : Stream {
        uv_pipe_init(loop, self.pipeHandle, ipc)
         
         super.init(streamHandle: uv_stream_ptr(self.pipeHandle))
-        
     }
+    
     deinit{
+        if isAlive {
+            Handle.close(self.handle)
+            self.pipeHandle.dealloc(1)
+            isAlive = false
+        }
     }
 
 }

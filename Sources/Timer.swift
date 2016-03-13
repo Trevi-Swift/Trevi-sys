@@ -8,6 +8,10 @@
 
 import Libuv
 
+
+/**
+ Libuv timer bindings and allow the user to use a closure on event.
+ */
 public class Timer : Handle {
     
     public let timerhandle : uv_timer_ptr
@@ -21,7 +25,17 @@ public class Timer : Handle {
         
     }
     
+    deinit {
+        if isAlive {
+            Handle.close(self.handle)
+            self.timerhandle.dealloc(1)
+            isAlive = false
+        }
+    }
+    
+    
     public func close() {
+        
         Handle.close(self.handle)
     }
     

@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		ACE514121C91F48F009EC206 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE514081C91F48F009EC206 /* Async.swift */; };
-		ACE514131C91F48F009EC206 /* FsBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE514091C91F48F009EC206 /* FsBase.swift */; };
 		ACE514141C91F48F009EC206 /* Handle.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE5140A1C91F48F009EC206 /* Handle.swift */; };
 		ACE514151C91F48F009EC206 /* LibuvUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE5140B1C91F48F009EC206 /* LibuvUtility.swift */; };
 		ACE514161C91F48F009EC206 /* Loop.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE5140C1C91F48F009EC206 /* Loop.swift */; };
@@ -18,12 +17,14 @@
 		ACE5141A1C91F48F009EC206 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE514101C91F48F009EC206 /* Timer.swift */; };
 		ACE5141B1C91F48F009EC206 /* Work.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE514111C91F48F009EC206 /* Work.swift */; };
 		ACE514221C91F5D3009EC206 /* TreviSys.h in Headers */ = {isa = PBXBuildFile; fileRef = ACE514211C91F5CB009EC206 /* TreviSys.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DF8460241C95026C001DB976 /* FSBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8460211C95026C001DB976 /* FSBase.swift */; };
+		DF8460251C95026C001DB976 /* LibuvError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8460221C95026C001DB976 /* LibuvError.swift */; };
+		DF8460261C95026C001DB976 /* Poll.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8460231C95026C001DB976 /* Poll.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		ACE513FC1C91F41B009EC206 /* TreviSys.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TreviSys.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ACE514081C91F48F009EC206 /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
-		ACE514091C91F48F009EC206 /* FsBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FsBase.swift; sourceTree = "<group>"; };
 		ACE5140A1C91F48F009EC206 /* Handle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Handle.swift; sourceTree = "<group>"; };
 		ACE5140B1C91F48F009EC206 /* LibuvUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibuvUtility.swift; sourceTree = "<group>"; };
 		ACE5140C1C91F48F009EC206 /* Loop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Loop.swift; sourceTree = "<group>"; };
@@ -34,6 +35,9 @@
 		ACE514111C91F48F009EC206 /* Work.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Work.swift; sourceTree = "<group>"; };
 		ACE514201C91F5CB009EC206 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ACE514211C91F5CB009EC206 /* TreviSys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TreviSys.h; sourceTree = "<group>"; };
+		DF8460211C95026C001DB976 /* FSBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FSBase.swift; sourceTree = "<group>"; };
+		DF8460221C95026C001DB976 /* LibuvError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibuvError.swift; sourceTree = "<group>"; };
+		DF8460231C95026C001DB976 /* Poll.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Poll.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,10 +72,12 @@
 			isa = PBXGroup;
 			children = (
 				ACE514081C91F48F009EC206 /* Async.swift */,
-				ACE514091C91F48F009EC206 /* FsBase.swift */,
 				ACE5140A1C91F48F009EC206 /* Handle.swift */,
 				ACE5140B1C91F48F009EC206 /* LibuvUtility.swift */,
 				ACE5140C1C91F48F009EC206 /* Loop.swift */,
+				DF8460211C95026C001DB976 /* FSBase.swift */,
+				DF8460221C95026C001DB976 /* LibuvError.swift */,
+				DF8460231C95026C001DB976 /* Poll.swift */,
 				ACE5140D1C91F48F009EC206 /* Pipe.swift */,
 				ACE5140E1C91F48F009EC206 /* Stream.swift */,
 				ACE5140F1C91F48F009EC206 /* Tcp.swift */,
@@ -129,7 +135,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0720;
-				ORGANIZATIONNAME = "Trevi Foundation";
+				ORGANIZATIONNAME = "Trevi Community";
 				TargetAttributes = {
 					ACE513FB1C91F41B009EC206 = {
 						CreatedOnToolsVersion = 7.2.1;
@@ -169,9 +175,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				ACE514161C91F48F009EC206 /* Loop.swift in Sources */,
+				DF8460241C95026C001DB976 /* FSBase.swift in Sources */,
+				DF8460251C95026C001DB976 /* LibuvError.swift in Sources */,
 				ACE514121C91F48F009EC206 /* Async.swift in Sources */,
+				DF8460261C95026C001DB976 /* Poll.swift in Sources */,
 				ACE5141B1C91F48F009EC206 /* Work.swift in Sources */,
-				ACE514131C91F48F009EC206 /* FsBase.swift in Sources */,
 				ACE514191C91F48F009EC206 /* Tcp.swift in Sources */,
 				ACE514171C91F48F009EC206 /* Pipe.swift in Sources */,
 				ACE514141C91F48F009EC206 /* Handle.swift in Sources */,
