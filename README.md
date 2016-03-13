@@ -8,9 +8,6 @@
 ## Overview
 This is the TreviSys module for Trevi project.
 
-## Versioning
-TreviSys follows the semantic versioning scheme. The API change and backwards compatibility rules are those indicated by SemVer.
-
 ## Swift version
 Trevi works with the latest version of Swift 2.2 Snapshot. You can download Swift binaries on [here](https://swift.org/download/#latest-development-snapshots).
 
@@ -83,6 +80,9 @@ Trevi works with the latest version of Swift 2.2 Snapshot. You can download Swif
     ```
 
     More details : Build Instructions on [libuv](https://github.com/libuv/libuv)
+
+## Versioning
+TreviSys follows the semantic versioning scheme. The API change and backwards compatibility rules are those indicated by SemVer.
 
 ## License
 This library is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE.txt).
