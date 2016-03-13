@@ -3,7 +3,7 @@
 //  Trevi
 //
 //  Created by JangTaehwan on 2016. 2. 17..
-//  Copyright © 2016년 LeeYoseob. All rights reserved.
+//  Copyright © 2016 Trevi Community. All rights reserved.
 //
 
 
@@ -11,22 +11,31 @@ import Libuv
 import Foundation
 
 
+/**
+ Libuv stream bindings and allow the user to use a closure on event.
+ Also, provides improved data read, write stream modules.
+ */
 public class Stream : Handle {
     
-    public static var streamBufferSize : Int = 4096
-    
     public let streamHandle : uv_stream_ptr
-    
     
     public init (streamHandle : uv_stream_ptr){
         self.streamHandle = streamHandle
         super.init(handle: uv_handle_ptr(streamHandle))
     }
     
+    deinit{
+        if isAlive {
+            Handle.close(self.handle)
+            self.streamHandle.dealloc(1)
+            isAlive = false
+        }
+    }
+    
     
     public func readStart() {
         
-//        Should add if state to set using work or not
+//        Set onRead event from other thread in thread pool. Not stable yet.
 //        uv_read_start(self.streamHandle, Stream.onAlloc, Work.onRead)
         
         uv_read_start(self.streamHandle, Stream.onAlloc, Stream.onRead)
@@ -80,7 +89,7 @@ extension Stream {
     
     public static func readStart(handle : uv_stream_ptr) {
         
-//        Should add if state to set using work or not
+//        Set onRead event from other thread in thread pool. Not stable yet.
 //        uv_read_start(handle, Stream.onAlloc, Work.onRead)
         
         uv_read_start(handle, Stream.onAlloc, Stream.onRead)
@@ -94,7 +103,7 @@ extension Stream {
         
         let request = uv_shutdown_ptr.alloc(1)
         var error : Int32
-        
+                
         error = uv_shutdown(request, handle, Stream.afterShutdown)
         
         return error
@@ -108,7 +117,6 @@ extension Stream {
         let buffer = uv_buf_ptr.alloc(1)
         let request : write_req_ptr = write_req_ptr.alloc(1)
             
-        request.memory.handle = handle
         request.memory.buffer = buffer
             
         buffer.memory = uv_buf_init(UnsafeMutablePointer<Int8>(data.bytes), UInt32(data.length))
@@ -172,20 +180,20 @@ extension Stream {
 extension Stream {
     
     public static var onAlloc : uv_alloc_cb = { (_, suggestedSize, buffer) in
-        buffer.initialize(uv_buf_init(UnsafeMutablePointer.alloc(suggestedSize), UInt32(suggestedSize)))
         
+        buffer.initialize(uv_buf_init(UnsafeMutablePointer.alloc(suggestedSize), UInt32(suggestedSize)))
     }
+    
     
     public static var onRead : uv_read_cb = { (handle, nread, buffer) in
         
         if nread <= 0 {
             if Int32(nread) == UV_EOF.rawValue {
-                print("eof")
                 Handle.close(uv_handle_ptr(handle))
             }
             else {
-                // Should handle error in here
                 
+                LibuvError.printState("Stream.onRead", error : Int32(nread))
             }
         }
         else if let wrap = Handle.dictionary[uv_handle_ptr(handle)] {
@@ -195,21 +203,27 @@ extension Stream {
                 callback(handle, data)
             }
         }
-        
     }
     
+    
     public static var afterShutdown : uv_shutdown_cb = { (request, status) in
-        // State after shutdown callback
         
+        let handle = request.memory.handle
+        
+        if status < 0 {
+            
+            LibuvError.printState("Stream.afterShutdown", error : status)
+        }
+        
+        Handle.close(uv_handle_ptr(handle))
         request.dealloc(1)
     }
     
     
-    // Should modify for file stream.
     public static var afterWrite : uv_write_cb = { (request, status) in
  
         let writeRequest = write_req_ptr(request)
-        let handle = writeRequest.memory.handle
+        let handle = writeRequest.memory.request.handle
         let buffer  = writeRequest.memory.buffer
 
         if let wrap = Handle.dictionary[uv_handle_ptr(handle)] {

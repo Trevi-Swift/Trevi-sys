@@ -3,12 +3,16 @@
 //  Trevi
 //
 //  Created by JangTaehwan on 2016. 2. 27..
-//  Copyright © 2016년 LeeYoseob. All rights reserved.
+//  Copyright © 2016 Trevi Community. All rights reserved.
 //
 
 import Libuv
 import Foundation
 
+/**
+ Libuv Filesystem bindings and events module, but considering better way.
+ So, hope to use FileSystem on Trevi temporary.
+ */
 public class FSBase {
     
     public static let BUF_SIZE = 1024
@@ -50,16 +54,20 @@ public struct FSInfo {
 // FsBase static functions
 
 extension FSBase {
-
     
-    public static func open(loop : uv_loop_ptr, handle : uv_pipe_ptr! = nil, path : String, flags : Int32, mode : Int32) -> Int32 {
+    
+    public static func open(loop : uv_loop_ptr = uv_default_loop(), handle : uv_pipe_ptr! = nil, path : String, flags : Int32, mode : Int32) -> Int32 {
         
+        let fd = UnsafeMutablePointer<uv_file>.alloc(1)
         let request = uv_fs_ptr.alloc(1)
         
-        let fd = uv_fs_open(loop, request, path, flags, mode, nil)
+        fd.memory = uv_fs_open(loop, request, path, flags, mode, nil)
         uv_fs_stat(loop, request, path, nil)
         
+        request.memory.data = void_ptr(fd)
+        
         let info =  UnsafeMutablePointer<FSInfo>.alloc(1)
+        
         info.memory.request = request
         info.memory.loop = loop
         info.memory.toRead = request.memory.statbuf.st_size
@@ -68,13 +76,18 @@ extension FSBase {
             handle.memory.data = void_ptr(info)
         }
         
-        return fd
+        return fd.memory
     }
     
-    public static func close(loop : uv_loop_ptr, request : uv_fs_ptr) {
+    public static func close(loop : uv_loop_ptr = uv_default_loop(), request : uv_fs_ptr) {
         
+        let fd = UnsafeMutablePointer<uv_file>(request.memory.data)
         let closeRequest = uv_fs_ptr.alloc(1)
-        uv_fs_close(loop, closeRequest, uv_file(request.memory.result), onClose)
+        
+        uv_fs_close(loop, closeRequest, fd.memory, onClose)
+        
+        fd.dealloc(1)
+        FSBase.cleanup(request)
     }
     
     public static func read(request : uv_fs_ptr) {
@@ -94,10 +107,31 @@ extension FSBase {
         uv_fs_write(uv_default_loop(), request, fd, buffer, 1, -1, afterWrite)
     }
     
+    public static func unlink(loop : uv_loop_ptr = uv_default_loop(), path : String) {
+        let request = uv_fs_ptr.alloc(1)
+        let error = uv_fs_unlink(loop, request, path, FSBase.afterUnlink)
+        
+        if error == 0 {
+            // Should handle error
+            
+        }
+    }
+    
+    public static func makeDirectory(loop : uv_loop_ptr = uv_default_loop(), path : String, mode : Int32 = 0o666) {
+        let request = uv_fs_ptr.alloc(1)
+        let error = uv_fs_mkdir(loop, request, path, mode, FSBase.afterMakeDirectory)
+        
+        if error == 0 {
+            // Should handle error
+            
+        }
+    }
+    
     public static func cleanup(request : uv_fs_ptr) {
         
-        FSBase.dictionary[request] = nil
+        //        FSBase.dictionary[request] = nil
         uv_fs_req_cleanup(request)
+        request.dealloc(1)
     }
     
 }
@@ -129,11 +163,9 @@ extension FSBase {
     
     public static var onClose : uv_fs_cb  = { request in
         
-        after(request, UV_FS_CLOSE)
+//        after(request, UV_FS_CLOSE)
         
         FSBase.cleanup(request)
-        uv_cancel(uv_req_ptr(request))
-        request.dealloc(1)
     }
     
     public static var onRead : uv_fs_cb  = { request in
@@ -143,7 +175,7 @@ extension FSBase {
             print("Filesystem read error : \(uv_strerror(Int32(request.memory.result)))")
         }
         else if request.memory.result == 0 {
-
+            
             FSBase.close(uv_default_loop(), request: request)
         }
         else {
@@ -164,6 +196,14 @@ extension FSBase {
         
         uv_cancel(uv_req_ptr(request))
         request.memory.data.dealloc(1)
+        request.dealloc(1)
+    }
+    
+    public static var afterUnlink : uv_fs_cb = { request in
+        request.dealloc(1)
+    }
+    
+    public static var afterMakeDirectory : uv_fs_cb = { request in
         request.dealloc(1)
     }
 }
