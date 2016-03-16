@@ -15,6 +15,6 @@ import Foundation
 public class LibuvError : ErrorType {
     
     public static func printState( location : String, error : Int32 ) {
-        print("Error on : \(location), name : \(uvErrorName(error)), message : \(uvErrorMessage(error))")
+//        print("Error on : \(location), name : \(uvErrorName(error)), message : \(uvErrorMessage(error))")
     }
 }
