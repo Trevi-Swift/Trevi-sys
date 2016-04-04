@@ -56,7 +56,7 @@ public struct FSInfo {
 extension FSBase {
     
     
-    public static func open(loop : uv_loop_ptr = uv_default_loop(), handle : uv_pipe_ptr! = nil, path : String, flags : Int32, mode : Int32) -> Int32 {
+    public static func open(loop : uv_loop_ptr = uv_default_loop(), pipe : uv_pipe_ptr! = nil, path : String, flags : Int32, mode : Int32) -> Int32 {
         
         let fd = UnsafeMutablePointer<uv_file>.alloc(1)
         let request = uv_fs_ptr.alloc(1)
@@ -72,7 +72,7 @@ extension FSBase {
         info.memory.loop = loop
         info.memory.toRead = request.memory.statbuf.st_size
         
-        if let handle = handle {
+        if let handle = pipe {
             handle.memory.data = void_ptr(info)
         }
         
