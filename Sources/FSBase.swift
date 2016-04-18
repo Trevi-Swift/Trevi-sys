@@ -127,6 +127,36 @@ extension FSBase {
         }
     }
     
+    public static func stat(loop : uv_loop_ptr = uv_default_loop(), path : String){
+        let request = uv_fs_ptr.alloc(1)
+        let error = uv_fs_stat(loop, request, path, FSBase.afterStat)
+        
+        if error == 0 {
+            // Should handle error
+            
+        }
+    }
+    
+    public static func fstat(loop : uv_loop_ptr = uv_default_loop(), file : uv_file){
+        let request = uv_fs_ptr.alloc(1)
+        let error = uv_fs_fstat(loop, request, file, FSBase.afterFStat)
+        
+        if error == 0 {
+            // Should handle error
+            
+        }
+    }
+    
+    public static func lstat(loop : uv_loop_ptr = uv_default_loop(), path : String){
+        let request = uv_fs_ptr.alloc(1)
+        let error = uv_fs_stat(loop, request, path, FSBase.afterLStat)
+        
+        if error == 0 {
+            // Should handle error
+            
+        }
+    }
+    
     public static func cleanup(request : uv_fs_ptr) {
         
         //        FSBase.dictionary[request] = nil
@@ -204,6 +234,18 @@ extension FSBase {
     }
     
     public static var afterMakeDirectory : uv_fs_cb = { request in
+        request.dealloc(1)
+    }
+    
+    public static var afterStat : uv_fs_cb = { request in
+        request.dealloc(1)
+    }
+    
+    public static var afterFStat : uv_fs_cb = { request in
+        request.dealloc(1)
+    }
+    
+    public static var afterLStat : uv_fs_cb = { request in
         request.dealloc(1)
     }
 }
