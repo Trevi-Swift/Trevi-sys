@@ -56,7 +56,7 @@ public struct FSInfo {
 extension FSBase {
     
     
-    public static func open(loop : uv_loop_ptr = uv_default_loop(), handle : uv_pipe_ptr! = nil, path : String, flags : Int32, mode : Int32) -> Int32 {
+    public static func open(loop : uv_loop_ptr = uv_default_loop(), pipe : uv_pipe_ptr! = nil, path : String, flags : Int32, mode : Int32) -> Int32 {
         
         let fd = UnsafeMutablePointer<uv_file>.alloc(1)
         let request = uv_fs_ptr.alloc(1)
@@ -72,7 +72,7 @@ extension FSBase {
         info.memory.loop = loop
         info.memory.toRead = request.memory.statbuf.st_size
         
-        if let handle = handle {
+        if let handle = pipe {
             handle.memory.data = void_ptr(info)
         }
         
@@ -120,6 +120,36 @@ extension FSBase {
     public static func makeDirectory(loop : uv_loop_ptr = uv_default_loop(), path : String, mode : Int32 = 0o666) {
         let request = uv_fs_ptr.alloc(1)
         let error = uv_fs_mkdir(loop, request, path, mode, FSBase.afterMakeDirectory)
+        
+        if error == 0 {
+            // Should handle error
+            
+        }
+    }
+    
+    public static func stat(loop : uv_loop_ptr = uv_default_loop(), path : String){
+        let request = uv_fs_ptr.alloc(1)
+        let error = uv_fs_stat(loop, request, path, FSBase.afterStat)
+        
+        if error == 0 {
+            // Should handle error
+            
+        }
+    }
+    
+    public static func fstat(loop : uv_loop_ptr = uv_default_loop(), file : uv_file){
+        let request = uv_fs_ptr.alloc(1)
+        let error = uv_fs_fstat(loop, request, file, FSBase.afterFStat)
+        
+        if error == 0 {
+            // Should handle error
+            
+        }
+    }
+    
+    public static func lstat(loop : uv_loop_ptr = uv_default_loop(), path : String){
+        let request = uv_fs_ptr.alloc(1)
+        let error = uv_fs_stat(loop, request, path, FSBase.afterLStat)
         
         if error == 0 {
             // Should handle error
@@ -204,6 +234,18 @@ extension FSBase {
     }
     
     public static var afterMakeDirectory : uv_fs_cb = { request in
+        request.dealloc(1)
+    }
+    
+    public static var afterStat : uv_fs_cb = { request in
+        request.dealloc(1)
+    }
+    
+    public static var afterFStat : uv_fs_cb = { request in
+        request.dealloc(1)
+    }
+    
+    public static var afterLStat : uv_fs_cb = { request in
         request.dealloc(1)
     }
 }
